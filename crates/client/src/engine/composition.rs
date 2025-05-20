@@ -18,7 +18,7 @@ use super::{
 use windows::Win32::{
     Foundation::WPARAM,
     UI::{
-        Input::KeyboardAndMouse::{VK_CONTROL, VK_SPACE},
+        Input::KeyboardAndMouse::{VK_CONTROL, VK_IME_OFF, VK_IME_ON, VK_SPACE},
         TextServices::{ITfComposition, ITfCompositionSink_Impl, ITfContext},
     },
 };
@@ -77,6 +77,28 @@ impl TextServiceFactory {
         if context.is_none() {
             return Ok(None);
         };
+
+        // VK 1A で IME OFF
+        if VK_IME_OFF.is_pressed() {
+            return Ok(Some((
+                vec![
+                    ClientAction::EndComposition,
+                    ClientAction::SetIMEMode(InputMode::Latin),
+                ],
+                CompositionState::None,
+            )));
+        }
+
+        // VK 16 で IME ON
+        if VK_IME_ON.is_pressed() {
+            return Ok(Some((
+                vec![
+                    ClientAction::EndComposition,
+                    ClientAction::SetIMEMode(InputMode::Kana),
+                ],
+                CompositionState::None,
+            )));
+        }
 
         // check shortcut keys
         if VK_CONTROL.is_pressed() && !VK_SPACE.is_pressed() {
