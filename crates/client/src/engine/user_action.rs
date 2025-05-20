@@ -1,6 +1,8 @@
 use crate::extension::VKeyExt;
 use anyhow::{Context, Result};
-use windows::Win32::UI::Input::KeyboardAndMouse::{GetKeyboardState, ToUnicode, VK_SHIFT};
+use windows::Win32::UI::Input::KeyboardAndMouse::{
+    GetKeyboardState, ToUnicode, VK_CONTROL, VK_SHIFT,
+};
 
 #[derive(Debug)]
 pub enum UserAction {
@@ -41,7 +43,13 @@ impl TryFrom<usize> for UserAction {
             0x08 => UserAction::Backspace, // VK_BACK
             0x09 => UserAction::Tab,       // VK_TAB
             0x0D => UserAction::Enter,     // VK_RETURN
-            0x20 => UserAction::Space,     // VK_SPACE
+            0x20 => {
+                if VK_CONTROL.is_pressed() {
+                    UserAction::ToggleInputMode
+                } else {
+                    UserAction::Space
+                }
+            } // VK_SPACE
             0x1B => UserAction::Escape,    // VK_ESCAPE
 
             0x25 => UserAction::Navigation(Navigation::Left), // VK_LEFT

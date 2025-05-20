@@ -18,7 +18,7 @@ use super::{
 use windows::Win32::{
     Foundation::WPARAM,
     UI::{
-        Input::KeyboardAndMouse::VK_CONTROL,
+        Input::KeyboardAndMouse::{VK_CONTROL, VK_SPACE},
         TextServices::{ITfComposition, ITfCompositionSink_Impl, ITfContext},
     },
 };
@@ -79,7 +79,7 @@ impl TextServiceFactory {
         };
 
         // check shortcut keys
-        if VK_CONTROL.is_pressed() {
+        if VK_CONTROL.is_pressed() && !VK_SPACE.is_pressed() {
             return Ok(None);
         }
 
