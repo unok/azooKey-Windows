@@ -18,7 +18,7 @@ use super::{
 use windows::Win32::{
     Foundation::WPARAM,
     UI::{
-        Input::KeyboardAndMouse::{VK_CONTROL, VK_IME_OFF, VK_IME_ON, VK_SPACE},
+        Input::KeyboardAndMouse::{VK_CONTROL, VK_IME_OFF, VK_IME_ON, VK_SHIFT, VK_SPACE},
         TextServices::{ITfComposition, ITfCompositionSink_Impl, ITfContext},
     },
 };
@@ -200,10 +200,19 @@ impl TextServiceFactory {
                         ClientAction::SetIMEMode(InputMode::Latin),
                     ],
                 ),
-                UserAction::Space | UserAction::Tab => (
-                    CompositionState::Previewing,
-                    vec![ClientAction::SetSelection(SetSelectionType::Down)],
-                ),
+                UserAction::Space | UserAction::Tab => {
+                    if VK_SHIFT.is_pressed() {
+                        (
+                            CompositionState::Previewing,
+                            vec![ClientAction::SetSelection(SetSelectionType::Up)],
+                        )
+                    } else {
+                        (
+                            CompositionState::Previewing,
+                            vec![ClientAction::SetSelection(SetSelectionType::Down)],
+                        )
+                    }
+                }
                 UserAction::Function(key) => match key {
                     Function::Six => (
                         CompositionState::Previewing,
@@ -288,10 +297,19 @@ impl TextServiceFactory {
                         ClientAction::SetIMEMode(InputMode::Latin),
                     ],
                 ),
-                UserAction::Space | UserAction::Tab => (
-                    CompositionState::Previewing,
-                    vec![ClientAction::SetSelection(SetSelectionType::Down)],
-                ),
+                UserAction::Space | UserAction::Tab => {
+                    if VK_SHIFT.is_pressed() {
+                        (
+                            CompositionState::Previewing,
+                            vec![ClientAction::SetSelection(SetSelectionType::Up)],
+                        )
+                    } else {
+                        (
+                            CompositionState::Previewing,
+                            vec![ClientAction::SetSelection(SetSelectionType::Down)],
+                        )
+                    }
+                }
                 UserAction::Function(key) => match key {
                     Function::Six => (
                         CompositionState::Previewing,
